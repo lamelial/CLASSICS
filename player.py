@@ -40,9 +40,6 @@ class Player(pygame.sprite.Sprite):
             self.vel_y = 0
             self.on_ground = True
 
-    def draw(self, surface):
-        surface.blit(self.img, self.rect)
-
     def get_rect(self):
         return self.rect
 

@@ -19,7 +19,7 @@ class Game:
         self.levels = [LevelOne(self.screen)]
         self.title_screen = TitleScreen(self.screen)
 
-    def start_level(self, index=0):
+    def start_level(self, index):
         self.level_index = index
         self.current_level = self.levels[index]
         self.state = State.LEVEL
@@ -32,7 +32,7 @@ class Game:
 
         if self.state == State.TITLE:
             if any(keys):
-                self.start_level()
+                self.start_level(0)
 
         elif self.state == State.LEVEL:
             self.current_level.handle_events(keys)

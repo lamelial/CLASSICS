@@ -22,9 +22,9 @@ class LevelOne(Level):
         pygame.draw.rect(self.screen, config.BLACK, (0, config.GROUND_Y, config.WIDTH, 50))
 
         draw_key_pattern(self.screen, self.meander_img, self.camera.offset_x * 0.5, 10)
-        self.player.draw(self.screen)
         player_rect_cam = self.camera.apply(self.player.get_rect())
         self.screen.blit(self.player.get_img(), player_rect_cam)
 
     def update(self):
         self.player.update(config.GRAVITY, config.GROUND_Y)
+        self.camera.follow(self.player.get_rect(), config.WIDTH)
