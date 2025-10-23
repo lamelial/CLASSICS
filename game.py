@@ -7,6 +7,7 @@ from title_screen import TitleScreen
 class State(Enum):
     TITLE = 0
     LEVEL = 1
+    CUT = 2
 
 
 class Game:
@@ -35,7 +36,12 @@ class Game:
                 self.start_level(0)
 
         elif self.state == State.LEVEL:
-            self.current_level.handle_events(keys)
+            if keys[pygame.K_a]:
+                self.title_screen.draw_agam()
+                self.current_level = None
+                self.state = State.CUT
+            else:
+                self.current_level.handle_events(keys)
 
     def update(self):
         if self.state == State.LEVEL:
@@ -43,6 +49,6 @@ class Game:
 
     def draw(self):
         if self.state == State.TITLE:
-            self.title_screen.draw()
+            self.title_screen.draw_title()
         elif self.state == State.LEVEL:
             self.current_level.draw()

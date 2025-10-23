@@ -3,7 +3,7 @@ import pygame
 
 class Player(pygame.sprite.Sprite):
     _SPEED = 5
-    _IMG_PATH = "assets/achilles.png"
+    _IMG_PATH = "assets/achilles2.png"
     _JUMP_STRENGTH = -15
 
     def __init__(self, x, y):
