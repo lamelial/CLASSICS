@@ -3,14 +3,16 @@ import config
 
 
 class TitleScreen:
+
     def __init__(self, screen):
         self.alpha = 0
         self.fade_speed = 3
         self.increasing = True
         self.screen = screen
+        self.romanica_font = pygame.font.Font("assets/Romanica.ttf", 60)
+
 
     def draw_title(self):
-        title_font = pygame.font.Font("assets/Greek-Freak.ttf", 60)
         prompt_font = pygame.font.Font(None, 20)
 
         if self.increasing:
@@ -26,7 +28,7 @@ class TitleScreen:
 
         self.screen.fill(config.BLACK)
 
-        title_text = title_font.render("OBJECTIVE: RESCUE HELEN", True, config.CLAY)
+        title_text = self.romanica_font.render("title... title... yeah", True, config.CLAY)
         title_rect = title_text.get_rect(
             center=(config.WIDTH // 2, config.HEIGHT // 2 - 100))
         self.screen.blit(title_text, title_rect)
@@ -38,7 +40,6 @@ class TitleScreen:
         self.screen.blit(prompt_surface, prompt_rect)
 
     def draw_agam(self):
-        title_font = pygame.font.Font("assets/Greek-Freak.ttf", 60)
         self.screen.fill(config.BLACK)
 
         banner_color = config.CLAY
@@ -49,10 +50,9 @@ class TitleScreen:
         banner_rect = pygame.Rect(banner_x, banner_y, banner_width, banner_height)
         pygame.draw.rect(self.screen, banner_color, banner_rect)
 
-        title_text = title_font.render("MISSION ACCOMPLISHED", True, config.BLACK)
+        title_text = self.romanica_font.render("put text in this banner", True, config.BLACK)
         title_rect = title_text.get_rect(center=(config.WIDTH // 2, config.HEIGHT // 2 - 100))
         self.screen.blit(title_text, title_rect)
-
 
         agam = pygame.image.load("assets/agam.png").convert_alpha()
         agam = pygame.transform.scale_by(agam, 0.4)
