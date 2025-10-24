@@ -10,8 +10,7 @@ class Level:
         self.background = None
         self.player = Player(100, 600)
         self.screen = screen
-        self.camera = Camera(screen.get_size()[0],
-                             screen.get_size()[1])
+        self.camera = Camera(screen.get_size()[0], screen.get_size()[1])
 
     def update(self):
         self.enemies.update()
