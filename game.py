@@ -36,19 +36,19 @@ class Game:
                 self.start_level(0)
 
         elif self.state == State.LEVEL:
-            if keys[pygame.K_a]:
-                self.title_screen.draw_agam()
-                self.current_level = None
-                self.state = State.CUT
-            else:
-                self.current_level.handle_events(keys)
+            self.current_level.handle_events(keys)
 
     def update(self):
         if self.state == State.LEVEL:
             self.current_level.update()
+            if self.current_level.check_level_done():
+                self.state = State.CUT
+                self.current_level = None
 
     def draw(self):
         if self.state == State.TITLE:
             self.title_screen.draw_title()
         elif self.state == State.LEVEL:
             self.current_level.draw()
+        elif self.state == State.CUT:
+            self.title_screen.draw_agam()

@@ -1,6 +1,7 @@
 import pygame
 from player import Player
 from camera import Camera
+import config
 
 
 class Level:
@@ -32,3 +33,8 @@ class Level:
         if keys[pygame.K_q]:
             self.player.attack(self.enemies)
 
+    def draw_key_pattern(self, surface, image, offset, y):
+        img_width = image.get_width()
+        start_x = int(offset) % img_width
+        for x in range(-img_width, config.WIDTH + img_width, img_width):
+            surface.blit(image, (x - start_x, y))
