@@ -15,6 +15,9 @@ class Player(pygame.sprite.Sprite):
         self.vel_y = 0
         self.on_ground = True
         self.facing_right = True
+        self.attack_cooldown = 400
+        self.last_attack_time = 0
+        self.attack_range = 50
 
     def jump(self):
         if self.on_ground:
@@ -45,3 +48,22 @@ class Player(pygame.sprite.Sprite):
 
     def get_img(self):
         return self.img
+
+    def attack(self, enemy_group):
+        now = pygame.time.get_ticks()
+
+        if now - self.last_attack_time < self.attack_cooldown:
+            return
+
+        self.last_attack_time = now
+        if self.facing_right:
+            hitbox = pygame.Rect(self.rect.right, self.rect.y,
+                                 self.attack_range, self.rect.height)
+        else:
+            hitbox = pygame.Rect(self.rect.left - self.attack_range,
+                                 self.rect.y, self.attack_range,
+                                 self.rect.height)
+
+        for enemy in enemy_group:
+            if hitbox.colliderect(enemy.rect):
+                enemy.take_damage()

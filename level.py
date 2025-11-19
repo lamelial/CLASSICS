@@ -28,3 +28,7 @@ class Level:
         if keys[pygame.K_SPACE]:
             self.player.jump()
         self.player.move(dx)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_q]:
+            self.player.attack(self.enemies)
+

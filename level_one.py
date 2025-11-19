@@ -1,5 +1,6 @@
 import pygame
 import config
+
 from level import Level
 from enemy import Enemy
 
@@ -14,8 +15,8 @@ def draw_key_pattern(surface, image, offset, y):
 class LevelOne(Level):
     def __init__(self, screen):
         super().__init__(screen)
-        self.enemy = Enemy(100, config.GROUND_Y - 100)
-        self.enemies.add(self.enemy)
+        for i in range(5):
+            self.enemies.add(Enemy(100, config.GROUND_Y - 100))
         self.meander_img = pygame.image.load("assets/key.png").convert_alpha()
         self.meander_img = pygame.transform.scale_by(self.meander_img, 0.5)
 
@@ -27,8 +28,9 @@ class LevelOne(Level):
 
         player_rect_cam = self.camera.apply(self.player.get_rect())
         self.screen.blit(self.player.get_img(), player_rect_cam)
-        enemy_rect_cam = self.camera.apply(self.enemy.get_rect())
-        self.screen.blit(self.enemy.get_img(), enemy_rect_cam)
+        for enemy in self.enemies:
+            enemy_rect_cam = self.camera.apply(enemy.rect)
+            self.screen.blit(enemy.img, enemy_rect_cam)
 
     def update(self):
         self.player.update(config.GRAVITY, config.GROUND_Y)
