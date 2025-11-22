@@ -2,7 +2,7 @@ import pygame
 import config
 
 
-class TitleScreen:
+class CutScene:
 
     def __init__(self, screen):
         self.alpha = 0

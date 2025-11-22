@@ -1,7 +1,7 @@
 import pygame
 from enum import Enum
 from level_one import LevelOne
-from title_screen import TitleScreen
+from cut_scene import CutScene
 from intro import Intro
 
 class State(Enum):
@@ -18,7 +18,7 @@ class Game:
         self.level_index = 0
         self.current_level = None
         self.levels = [Intro(self.screen), LevelOne(self.screen)]
-        self.title_screen = TitleScreen(self.screen)
+        self.title_screen = CutScene(self.screen)
 
     def start_level(self, index):
         self.level_index = index
