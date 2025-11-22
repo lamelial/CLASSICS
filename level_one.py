@@ -3,11 +3,12 @@ import config
 
 from level import Level
 from enemy import Enemy
+from player import Player
 
 
 class LevelOne(Level):
     def __init__(self, screen):
-        super().__init__(screen)
+        super().__init__(screen, Player(100, 100))
        #  for i in range(5):
         self.enemies.add(Enemy(100, config.GROUND_Y - 100, "red"))
         self.enemies.add(Enemy(150, config.GROUND_Y - 100, "blue"))

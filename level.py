@@ -5,11 +5,11 @@ import config
 
 
 class Level:
-    def __init__(self, screen):
+    def __init__(self, screen, player):
         self.enemies = pygame.sprite.Group()
         self.objects = pygame.sprite.Group()
         self.background = None
-        self.player = Player(100, 600)
+        self.player = player
         self.screen = screen
         self.camera = Camera(screen.get_size()[0], screen.get_size()[1])
 

@@ -2,7 +2,7 @@ import pygame
 from enum import Enum
 from level_one import LevelOne
 from title_screen import TitleScreen
-
+from intro import Intro
 
 class State(Enum):
     TITLE = 0
@@ -17,7 +17,7 @@ class Game:
         self.state = State.TITLE
         self.level_index = 0
         self.current_level = None
-        self.levels = [LevelOne(self.screen)]
+        self.levels = [Intro(self.screen), LevelOne(self.screen)]
         self.title_screen = TitleScreen(self.screen)
 
     def start_level(self, index):
@@ -31,9 +31,9 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
 
-        if self.state == State.TITLE:
+        if self.state == State.TITLE or self.state == State.CUT:
             if any(keys):
-                self.start_level(0)
+                self.start_level(self.level_index)
 
         elif self.state == State.LEVEL:
             self.current_level.handle_events(keys)
@@ -44,6 +44,7 @@ class Game:
             if self.current_level.check_level_done():
                 self.state = State.CUT
                 self.current_level = None
+                self.level_index += 1
 
     def draw(self):
         if self.state == State.TITLE:
