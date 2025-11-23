@@ -17,7 +17,7 @@ class Game:
         self.state = State.TITLE
         self.level_index = 0
         self.current_level = None
-        self.levels = [Intro(self.screen), LevelOne(self.screen)]
+        self.levels = [LevelOne(self.screen)]
         self.title_screen = CutScene(self.screen)
 
     def start_level(self, index):
@@ -30,7 +30,6 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-
         if self.state == State.TITLE or self.state == State.CUT:
             if any(keys):
                 self.start_level(self.level_index)
@@ -44,7 +43,8 @@ class Game:
             if self.current_level.check_level_done():
                 self.state = State.CUT
                 self.current_level = None
-                self.level_index += 1
+                if self.level_index < len(self.levels) - 1:
+                    self.level_index += 1
 
     def draw(self):
         if self.state == State.TITLE:

@@ -21,17 +21,17 @@ class Level:
         pass
 
     def handle_events(self, keys):
-        dx = 0
+        self.dx = 0
         if keys[pygame.K_LEFT]:
-            dx = -1
+            self.dx = -1
         if keys[pygame.K_RIGHT]:
-            dx = 1
+            self.dx = 1
         if keys[pygame.K_SPACE]:
             self.player.jump()
-        self.player.move(dx)
+        self.player.move(self.dx)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_q]:
-            self.player.attack(self.enemies)
+            self.player.attack(self.enemies, self.objects)
 
     def draw_key_pattern(self, surface, image, offset, y):
         img_width = image.get_width()

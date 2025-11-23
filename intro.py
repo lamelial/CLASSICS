@@ -25,7 +25,7 @@ class Intro(Level):
         y = config.HEIGHT - 275
         x = 100  # starting x-position
 
-        for i in range(15):
+        for i in range(5):
             self.fleet.append(Boat(x, y))
             x -= random.randint(spacing_min, spacing_max)
 
@@ -35,7 +35,10 @@ class Intro(Level):
         self.screen.fill(config.CLAY)
 
         self.draw_key_pattern(self.screen, self.meander_img, self.camera.offset_x * 0.5, 10)
-        self.draw_key_pattern(self.screen, self.wave_img, self.camera.offset_x * 0.5, config.HEIGHT - 50)
+        self.draw_key_pattern(self.screen, self.wave_img, self.camera.offset_x * 0.5, config.HEIGHT - 70)
+        self.draw_key_pattern(self.screen, self.wave_img, self.camera.offset_x * 0.5, config.HEIGHT - 30)
+        self.draw_key_pattern(self.screen, self.wave_img, self.camera.offset_x * 0.5, config.HEIGHT - 120)
+
 
         player_rect_cam = self.camera.apply(self.player.get_rect())
         self.screen.blit(self.player.get_img(), player_rect_cam)
@@ -43,7 +46,7 @@ class Intro(Level):
         for boat in self.fleet:
             rect_cam = self.camera.apply(boat.get_rect())
             self.screen.blit(boat.get_img(), rect_cam)
-
+ 
 
     def update(self):
         #self.camera.follow(self.player.get_rect(), config.WIDTH)
@@ -58,10 +61,9 @@ class Intro(Level):
         elif keys[pygame.K_LEFT]:
             dx = -1
 
-        # move all boats together
         if dx != 0:
             for boat in self.fleet:
-                boat.move(dx)   # assumes Boat has move(dx) similar to Player.move
+                boat.move(dx)  
 
     def check_level_done(self):
         yah = True
