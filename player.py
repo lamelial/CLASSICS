@@ -63,8 +63,6 @@ class Player(pygame.sprite.Sprite):
         player_rect = self.rect
         facing_right = self.facing_right
         attack_width = 50
-        
-        
 
         if facing_right:
             attack_rect = pygame.Rect(

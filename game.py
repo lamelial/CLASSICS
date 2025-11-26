@@ -1,7 +1,8 @@
 import pygame
 from enum import Enum
 from level_one import LevelOne
-from cut_scene import CutScene
+from level_two import LevelTwo
+from card import Card
 from intro import Intro
 
 class State(Enum):
@@ -17,8 +18,8 @@ class Game:
         self.state = State.TITLE
         self.level_index = 0
         self.current_level = None
-        self.levels = [LevelOne(self.screen)]
-        self.title_screen = CutScene(self.screen)
+        self.levels = [Intro(self.screen), LevelOne(self.screen), LevelTwo(self.screen)]
+        self.title_screen = Card(self.screen)
 
     def start_level(self, index):
         self.level_index = index
@@ -33,6 +34,11 @@ class Game:
         if self.state == State.TITLE or self.state == State.CUT:
             if any(keys):
                 self.start_level(self.level_index)
+        # dev tools
+        if keys[pygame.K_1]:
+            self.start_level(1)
+        if keys[pygame.K_2]:
+            self.start_level(2)
 
         elif self.state == State.LEVEL:
             self.current_level.handle_events(keys)

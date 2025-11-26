@@ -12,13 +12,14 @@ class Level:
         self.player = player
         self.screen = screen
         self.camera = Camera(screen.get_size()[0], screen.get_size()[1])
+        self.font = pygame.font.Font("assets/Romanica.ttf", 30)
 
     def update(self):
         self.enemies.update()
         self.objects.update()
 
     def draw(self):
-        pass
+        pass 
 
     def handle_events(self, keys):
         self.dx = 0

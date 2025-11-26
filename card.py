@@ -2,14 +2,13 @@ import pygame
 import config
 
 
-class CutScene:
-
+class Card:
     def __init__(self, screen):
         self.alpha = 0
         self.fade_speed = 3
         self.increasing = True
         self.screen = screen
-        self.romanica_font = pygame.font.Font("assets/Romanica.ttf", 60)
+        self.font = pygame.font.Font("assets/Romanica.ttf", 60)
 
 
     def draw_title(self):
@@ -28,7 +27,7 @@ class CutScene:
 
         self.screen.fill(config.BLACK)
 
-        title_text = self.romanica_font.render("title... title... yeah", True, config.CLAY)
+        title_text = self.font.render("title... title... yeah", True, config.CLAY)
         title_rect = title_text.get_rect(
             center=(config.WIDTH // 2, config.HEIGHT // 2 - 100))
         self.screen.blit(title_text, title_rect)
@@ -50,7 +49,7 @@ class CutScene:
         banner_rect = pygame.Rect(banner_x, banner_y, banner_width, banner_height)
         pygame.draw.rect(self.screen, banner_color, banner_rect)
 
-        title_text = self.romanica_font.render("put text in this banner", True, config.BLACK)
+        title_text = self.font.render("put text in this banner", True, config.BLACK)
         title_rect = title_text.get_rect(center=(config.WIDTH // 2, config.HEIGHT // 2 - 100))
         self.screen.blit(title_text, title_rect)
 
@@ -59,3 +58,4 @@ class CutScene:
         agam_rect = agam.get_rect()
         agam_rect.center = (config.WIDTH // 2 - 30, config.HEIGHT // 2 + 20)
         self.screen.blit(agam, agam_rect)
+
