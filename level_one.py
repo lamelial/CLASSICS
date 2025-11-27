@@ -23,6 +23,9 @@ class LevelOne(Level):
         self.meander_img = pygame.image.load("assets/key.png").convert_alpha()
         self.meander_img = pygame.transform.scale_by(self.meander_img, 0.5)
         self.showing_card = True
+        self.dialogue_triggered = False
+        self.dialogue = TextSequence(config.BLACK)
+        self.dialogue.add_line(TextLine("THE WALLS OF TROY", self.font, 100, hold_frames=50))
 
         self.gate_x = 1200
 
@@ -44,7 +47,7 @@ class LevelOne(Level):
 
         self.draw_key_pattern(self.screen, self.meander_img, self.camera.offset_x * 0.5, 10)
         self.draw_key_pattern(self.screen, self.meander_img, self.camera.offset_x * 0.5, config.HEIGHT - 70)
-        self.draw_gate(self.screen, self.gate_x - self.camera.offset_x, config.GROUND_Y) # drawing player in here sorry
+        self.draw_gate(self.screen, self.gate_x, config.GROUND_Y) # drawing player in here sorry
 
         for enemy in self.enemies:
             enemy_rect_cam = self.camera.apply(enemy.rect)
@@ -53,6 +56,8 @@ class LevelOne(Level):
         # for gate in self.objects:
         #     gate_rect_cam = self.camera.apply(gate.rect)
         #     self.screen.blit(gate.image, gate_rect_cam)
+        if self.dialogue_triggered:
+            self.dialogue.draw(self.screen)
 
 
     def check_level_done(self):
@@ -72,6 +77,11 @@ class LevelOne(Level):
         self.player.update()
         self.camera.follow(self.player.get_rect(), config.WIDTH)
         self.enemies.update()
+
+        if self.dialogue_triggered:
+            self.dialogue.update()
+            if self.dialogue.is_finished():
+                self.dialogue_triggered = False
         
     def handle_events(self, keys):
         if self.showing_card:
@@ -107,32 +117,52 @@ class LevelOne(Level):
         self.screen.fill(config.BLACK)
         self.card_sequence.draw(self.screen)
 
-    def draw_gate(self, surface, x, ground_y, label="ΜYΣΙΑ"):
-        GATE_COLOR = (0, 0, 0)  # vase-black
+    def draw_gate(self, surface, x_world, ground_y, label="ΜYΣΙΑ"):
+        GATE_COLOR = config.BLACK
         PILLAR_WIDTH = 40
         GATE_HEIGHT = 250
         GATE_WIDTH = 300
         BEAM_HEIGHT = 25
 
-        # pillars
-        left_pillar = pygame.Rect(x, ground_y - GATE_HEIGHT, PILLAR_WIDTH, GATE_HEIGHT)
-        right_pillar = pygame.Rect(x + GATE_WIDTH, ground_y - GATE_HEIGHT, PILLAR_WIDTH, GATE_HEIGHT)
+        # WORLD-SPACE rects
+        left_pillar_world = pygame.Rect(x_world, ground_y - GATE_HEIGHT, PILLAR_WIDTH, GATE_HEIGHT)
+        right_pillar_world = pygame.Rect(x_world + GATE_WIDTH, ground_y - GATE_HEIGHT, PILLAR_WIDTH, GATE_HEIGHT)
+        beam_world = pygame.Rect(x_world, ground_y - GATE_HEIGHT - BEAM_HEIGHT,
+                                GATE_WIDTH + PILLAR_WIDTH, BEAM_HEIGHT)
 
+        # CAMERA-SPACE rects for drawing
+        left_pillar = self.camera.apply(left_pillar_world)
+        right_pillar = self.camera.apply(right_pillar_world)
+        beam = self.camera.apply(beam_world)
+
+        # draw pillars & beam
         pygame.draw.rect(surface, GATE_COLOR, left_pillar)
-        # so that the player walks through the gate. bad code seperation yeah whatever
-        player_rect_cam = self.camera.apply(self.player.get_rect())
-        self.screen.blit(self.player.get_img(), player_rect_cam)
-        
         pygame.draw.rect(surface, GATE_COLOR, right_pillar)
-
-        # beam
-        beam = pygame.Rect(x, ground_y - GATE_HEIGHT - BEAM_HEIGHT, GATE_WIDTH + PILLAR_WIDTH, BEAM_HEIGHT)
         pygame.draw.rect(surface, GATE_COLOR, beam)
 
-        # label text
-        greek_font = pygame.font.Font("assets/FreeSerif.ttf", 32)
+        # draw player (already doing this correctly)
+        player_rect_cam = self.camera.apply(self.player.get_rect())
+        self.screen.blit(self.player.get_img(), player_rect_cam)
+
+        # label in camera space
+        greek_font = pygame.font.Font("assets/FreeSerif.ttf", 20)
         label_surf = greek_font.render(label, True, config.CLAY)
-        label_rect = label_surf.get_rect(center=(x + GATE_WIDTH/2 +10, ground_y - GATE_HEIGHT - BEAM_HEIGHT // 2))
+        label_rect = label_surf.get_rect(center=(beam.centerx, beam.top + 10))  # tweak as you like
         surface.blit(label_surf, label_rect)
 
-        #return pygame.Rect(x, ground_y - GATE_HEIGHT, 200 + PILLAR_WIDTH, GATE_HEIGHT + BEAM_HEIGHT)
+        # COLLISION: still world space
+        passage_rect_world = pygame.Rect(
+            x_world + PILLAR_WIDTH,
+            ground_y - GATE_HEIGHT - BEAM_HEIGHT,
+            GATE_WIDTH,
+            GATE_HEIGHT + BEAM_HEIGHT,
+        )
+
+        if not self.dialogue_triggered and self.player.get_rect().colliderect(passage_rect_world):
+            print("collide")
+            self.trigger_dialogue()
+            self.dialogue_triggered = True
+
+
+    def trigger_dialogue(self):
+        self.dialogue.start()
