@@ -94,3 +94,5 @@ class TextSequence:
 
     def is_finished(self):
         return self.finished
+
+

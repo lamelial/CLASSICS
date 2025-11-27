@@ -12,7 +12,7 @@ from textfx import TextLine, TextSequence
 class LevelOne(Level):
     def __init__(self, screen):
         super().__init__(screen, Player(100, config.GROUND_Y))
-       #  for i in range(5):
+        # for i in range(5):
         y_ground = config.GROUND_Y - 250
         start_x = config.WIDTH + 1000
 
@@ -23,9 +23,8 @@ class LevelOne(Level):
         self.meander_img = pygame.image.load("assets/key.png").convert_alpha()
         self.meander_img = pygame.transform.scale_by(self.meander_img, 0.5)
         self.showing_card = True
-        self.gate = Gate(x=1600, ground_y=config.GROUND_Y)
-        self.objects.add(self.gate)
 
+        self.gate_x = 1200
 
         # card
         self.showing_card = True
@@ -45,18 +44,17 @@ class LevelOne(Level):
 
         self.draw_key_pattern(self.screen, self.meander_img, self.camera.offset_x * 0.5, 10)
         self.draw_key_pattern(self.screen, self.meander_img, self.camera.offset_x * 0.5, config.HEIGHT - 70)
+        self.draw_gate(self.screen, self.gate_x - self.camera.offset_x, config.GROUND_Y) # drawing player in here sorry
 
-        player_rect_cam = self.camera.apply(self.player.get_rect())
-        self.screen.blit(self.player.get_img(), player_rect_cam)
         for enemy in self.enemies:
             enemy_rect_cam = self.camera.apply(enemy.rect)
             self.screen.blit(enemy.img, enemy_rect_cam)
         
-        for gate in self.objects:
-            gate_rect_cam = self.camera.apply(gate.rect)
-            self.screen.blit(gate.image, gate_rect_cam)
+        # for gate in self.objects:
+        #     gate_rect_cam = self.camera.apply(gate.rect)
+        #     self.screen.blit(gate.image, gate_rect_cam)
 
-    
+
     def check_level_done(self):
         if len(self.enemies) == 0:
             return True
@@ -77,8 +75,11 @@ class LevelOne(Level):
         
     def handle_events(self, keys):
         if self.showing_card:
-            return
-
+            if keys[pygame.K_SPACE]:
+                self.showing_card = False # SKIP
+            else:
+                return
+            
         super().handle_events(keys)
         player_rect = self.player.get_rect()
 
@@ -104,8 +105,34 @@ class LevelOne(Level):
 
     def draw_card(self):
         self.screen.fill(config.BLACK)
-
         self.card_sequence.draw(self.screen)
-        greek_surf = self.font.render("ΜΥΣΙΑ", True, (0, 0, 0))
-        rect = greek_surf.get_rect(center=(config.WIDTH // 2, 300))
-        self.screen.blit(greek_surf, rect)
+
+    def draw_gate(self, surface, x, ground_y, label="ΜYΣΙΑ"):
+        GATE_COLOR = (0, 0, 0)  # vase-black
+        PILLAR_WIDTH = 40
+        GATE_HEIGHT = 250
+        GATE_WIDTH = 300
+        BEAM_HEIGHT = 25
+
+        # pillars
+        left_pillar = pygame.Rect(x, ground_y - GATE_HEIGHT, PILLAR_WIDTH, GATE_HEIGHT)
+        right_pillar = pygame.Rect(x + GATE_WIDTH, ground_y - GATE_HEIGHT, PILLAR_WIDTH, GATE_HEIGHT)
+
+        pygame.draw.rect(surface, GATE_COLOR, left_pillar)
+        # so that the player walks through the gate. bad code seperation yeah whatever
+        player_rect_cam = self.camera.apply(self.player.get_rect())
+        self.screen.blit(self.player.get_img(), player_rect_cam)
+        
+        pygame.draw.rect(surface, GATE_COLOR, right_pillar)
+
+        # beam
+        beam = pygame.Rect(x, ground_y - GATE_HEIGHT - BEAM_HEIGHT, GATE_WIDTH + PILLAR_WIDTH, BEAM_HEIGHT)
+        pygame.draw.rect(surface, GATE_COLOR, beam)
+
+        # label text
+        greek_font = pygame.font.Font("assets/FreeSerif.ttf", 32)
+        label_surf = greek_font.render(label, True, config.CLAY)
+        label_rect = label_surf.get_rect(center=(x + GATE_WIDTH/2 +10, ground_y - GATE_HEIGHT - BEAM_HEIGHT // 2))
+        surface.blit(label_surf, label_rect)
+
+        #return pygame.Rect(x, ground_y - GATE_HEIGHT, 200 + PILLAR_WIDTH, GATE_HEIGHT + BEAM_HEIGHT)
