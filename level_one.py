@@ -14,6 +14,7 @@ class State(enum.Enum):
     PLAYING = 2
     PAUSED = 3
     GAME_OVER = 4
+    RETURN = 5
 
 class LevelOne(Level):
     def __init__(self, screen):
@@ -32,7 +33,7 @@ class LevelOne(Level):
         self.dialogue_triggered = False
         self.dialogue = TextSequence(config.BLACK)
         self.dialogue.add_line(TextLine("THE WALLS OF TROY", self.font, 100, hold_frames=50))
-        self.start = State.START
+        self.state = State.START
         self.gate_x = 1200
 
         # card
@@ -46,6 +47,9 @@ class LevelOne(Level):
         self.card_sequence.start()
 
     def draw(self):
+        if self.state == State.GAME_OVER:
+            return
+
         self.screen.fill(config.CLAY)
         if self.showing_card:
             self.draw_card()
@@ -72,15 +76,18 @@ class LevelOne(Level):
 
 
     def check_level_done(self):
-        if len(self.enemies) == 0:
-            self.state = State.GAME_OVER
-            return self.level_over()
+        if self.state == State.RETURN:
+            return True
         else:
             return False
 
 
 
     def update(self):
+        if self.state == State.GAME_OVER:
+            self.level_over()
+            return
+        
         if self.showing_card:
             self.card_sequence.update()
             if self.card_sequence.is_finished():
@@ -91,6 +98,9 @@ class LevelOne(Level):
         self.player.update()
         self.camera.follow(self.player.get_rect(), config.WIDTH)
         self.enemies.update()
+
+        if len(self.enemies) == 0:
+            self.state = State.GAME_OVER
 
         if self.dialogue_triggered:
             self.dialogue.update()
@@ -193,13 +203,11 @@ class LevelOne(Level):
         small_font = pygame.font.Font("assets/Romanica.ttf", 24)
 
         lines = [
-            "THIS WAS MYSIA.",
-            "HELEN ISN'T HERE.",
+            "TEST LEVEL COMPLETE",
             f"GLORY: {self.player.glory}",
-            "HELEN RESCUED: 0",
         ]
 
-        title_surf = big_font.render("THE WAR GOES ON", True, config.CLAY)
+        title_surf = big_font.render("DONE", True, config.CLAY)
         title_rect = title_surf.get_rect(center=(config.WIDTH // 2, 100))
         self.screen.blit(title_surf, title_rect)
 
@@ -216,4 +224,5 @@ class LevelOne(Level):
             hint_rect = hint_surf.get_rect(center=(config.WIDTH // 2, config.HEIGHT - 80))
             self.screen.blit(hint_surf, hint_rect)
 
-        return self.timer <= 0
+        if self.timer <= :
+            self.state = State.RETURN
