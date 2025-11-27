@@ -7,7 +7,7 @@ from enemy import Enemy
 from player import Player
 from gate import Gate
 
-
+# lynarssus
 class LevelTwo(Level):
     def __init__(self, screen):
         super().__init__(screen, Player(100, config.GROUND_Y))
@@ -22,16 +22,11 @@ class LevelTwo(Level):
         self.meander_img = pygame.image.load("assets/key.png").convert_alpha()
         self.meander_img = pygame.transform.scale_by(self.meander_img, 0.5)
 
-        self.gate = Gate(x=1600, ground_y=config.GROUND_Y)
-        self.objects.add(self.gate)
-
     def draw(self):
         self.screen.fill(config.CLAY)
 
         self.draw_key_pattern(self.screen, self.meander_img, self.camera.offset_x * 0.5, 10)
         self.draw_key_pattern(self.screen, self.meander_img, self.camera.offset_x * 0.5, config.HEIGHT - 70)
-        # pygame.draw.rect(self.screen, config.BLACK, (100, 100, 120, 80))     # house block
-        #pygame.draw.polygon(self.screen, config.BLACK, [(100, 100), (100+120, 100), (100+60, 100-50)]) # roof
 
         player_rect_cam = self.camera.apply(self.player.get_rect())
         self.screen.blit(self.player.get_img(), player_rect_cam)

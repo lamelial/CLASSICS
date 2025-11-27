@@ -29,7 +29,7 @@ class Intro(Level):
         self.started = False
 
         self.text_seq = TextSequence()
-        self.text_seq.add_line(TextLine("PROPAGANDA ONE.",
+        self.text_seq.add_line(TextLine("WE LAUNCH ONE THOUSAND SHIPS FOR HELEN",
                                         self.font, 180))
         self.text_seq.add_line(TextLine("PROPAGANDA TWO.",
                                         self.font, 180))

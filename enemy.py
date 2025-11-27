@@ -54,8 +54,9 @@ class Enemy(pygame.sprite.Sprite):
     def get_img(self):
         return self.img
 
-    def take_damage(self):
+    def take_damage(self, player):
         self.health -= 1
         self.damage_timer = 10
         if self.health <= 0:
             self.kill()
+            player.add_glory(10)

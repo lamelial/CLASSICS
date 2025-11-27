@@ -22,6 +22,8 @@ class Player(pygame.sprite.Sprite):
         self.last_attack_time = 0
         self.attack_range = 50
 
+        self.glory = 0
+
     def jump(self):
         if self.on_ground:
             self.vel_y = self._JUMP_STRENGTH
@@ -51,6 +53,9 @@ class Player(pygame.sprite.Sprite):
 
     def get_img(self):
         return self.img
+    
+    def add_glory(self, amount):
+        self.glory += amount
 
     def attack(self, enemies, objects):
         now = pygame.time.get_ticks()
@@ -82,7 +87,7 @@ class Player(pygame.sprite.Sprite):
         # hit enemies
         for enemy in enemies:
             if attack_rect.colliderect(enemy.rect):
-                enemy.take_damage()
+                enemy.take_damage(self)
         for ob in objects:
             if ob.solid and attack_rect.colliderect(ob.rect):
                 ob.take_damage()
