@@ -108,11 +108,18 @@ class LevelOne(Level):
                 self.dialogue_triggered = False
         
     def handle_events(self, keys):
+
+        if self.state == State.GAME_OVER:
+            if keys[pygame.K_SPACE]:
+                self.state = State.RETURN
+                return
+            
         if self.showing_card:
             if keys[pygame.K_SPACE]:
                 self.showing_card = False # SKIP
             else:
                 return
+
             
         super().handle_events(keys)
         player_rect = self.player.get_rect()
@@ -159,6 +166,10 @@ class LevelOne(Level):
         right_pillar = self.camera.apply(right_pillar_world)
         beam = self.camera.apply(beam_world)
 
+        #wall_bg = pygame.Rect(x_world + GATE_WIDTH + PILLAR_WIDTH, ground_y - 100, 4000, 100)
+        #wall = self.camera.apply(wall_bg)
+        #pygame.draw.rect(surface, GATE_COLOR, wall)
+
         # draw pillars & beam
         pygame.draw.rect(surface, GATE_COLOR, left_pillar)
 
@@ -168,7 +179,6 @@ class LevelOne(Level):
 
         pygame.draw.rect(surface, GATE_COLOR, right_pillar)
         pygame.draw.rect(surface, GATE_COLOR, beam)
-
 
 
         # label in camera space
@@ -189,6 +199,7 @@ class LevelOne(Level):
             print("collide")
             self.trigger_dialogue()
             self.dialogue_triggered = True
+
 
 
     def trigger_dialogue(self):
@@ -224,5 +235,7 @@ class LevelOne(Level):
             hint_rect = hint_surf.get_rect(center=(config.WIDTH // 2, config.HEIGHT - 80))
             self.screen.blit(hint_surf, hint_rect)
 
-        if self.timer <= :
+        if self.timer <= 0:
             self.state = State.RETURN
+
+
