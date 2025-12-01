@@ -3,6 +3,8 @@ from enum import Enum
 from level_one import LevelOne
 from level_two import LevelTwo
 from level_three import LevelThree
+from level_four import LevelFour
+from level_five import LevelFive 
 from card import Card
 from intro import Intro
 
@@ -19,7 +21,7 @@ class Game:
         self.state = State.TITLE
         self.level_index = 0
         self.current_level = None
-        self.levels = [Intro(self.screen), LevelOne(self.screen), LevelTwo(self.screen), LevelThree(self.screen)]
+        self.levels = [Intro(self.screen), LevelOne(self.screen), LevelTwo(self.screen), LevelThree(self.screen), LevelFour(self.screen), LevelFive(self.screen)]
         self.title_screen = Card(self.screen)
 
     def start_level(self, index):
@@ -44,6 +46,8 @@ class Game:
             self.start_level(3)
         if keys[pygame.K_4]:
             self.start_level(4)
+        if keys[pygame.K_5]:
+            self.start_level(5)
 
         elif self.state == State.LEVEL:
             self.current_level.handle_events(keys)

@@ -128,8 +128,8 @@ class LevelThree(GameplayLevel):
                     building.villagers_fled = True
                     for i in range(building.villagers_inside):
                         villager = Villager(
-                            building.x + random.randint(20, 80),
-                            config.GROUND_Y - 250 
+                            building.x + random.randint(0, 150),
+                            config.GROUND_Y - 250
                         )
                         villager.flee()
                         self.villagers.add(villager)
