@@ -27,7 +27,7 @@ class Card:
 
         self.screen.fill(config.BLACK)
 
-        title_text = self.font.render("title... title... yeah", True, config.CLAY)
+        title_text = self.font.render("FOR HELEN", True, config.CLAY)
         title_rect = title_text.get_rect(
             center=(config.WIDTH // 2, config.HEIGHT // 2 - 100))
         self.screen.blit(title_text, title_rect)

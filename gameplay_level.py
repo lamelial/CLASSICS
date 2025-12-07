@@ -68,6 +68,7 @@ class GameplayLevel(Level):
             if self.card_sequence.is_finished():
                 self.showing_card = False
                 self.state = State.PLAYING
+                print("PLAYING")
             return
         
         self.player.update()

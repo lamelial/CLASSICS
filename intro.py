@@ -6,7 +6,7 @@ import random
 from boat import Boat
 from camera import Camera
 from level import Level
-from textfx import TextSequence, TextLine   # ✅ new import
+from textfx import TextSequence, TextLine 
 
 
 class Intro(Level):
@@ -29,12 +29,12 @@ class Intro(Level):
         self.started = False
 
         self.text_seq = TextSequence()
-        self.text_seq.add_line(TextLine("WE LAUNCH ONE THOUSAND SHIPS FOR HELEN",
-                                        self.font, 180))
-        self.text_seq.add_line(TextLine("PROPAGANDA TWO.",
-                                        self.font, 180))
+        self.text_seq.add_line(TextLine("ONE THOUSAND SHIPS SAIL",
+                                        self.font, 120))
+        self.text_seq.add_line(TextLine("TO LIBERATE HELEN FROM THE TROJANS",
+                                        self.font, 120))
         self.text_seq.add_line(TextLine("OBJECTIVE: RESCUE HELEN",
-                                        self.font, 180))
+                                        self.font, 120))
 
         # fleet setup ...
         self.fleet = [self.player]

@@ -17,48 +17,46 @@ class LevelOne(GameplayLevel):
         self.gate_x = 1200
         self.revelation_triggered = False
         self.setup_enemies()
+        self.state = State.PLAYING
         
     def setup_card_sequence(self):
-        """The mission briefing - confident and righteous"""
-        self.card_sequence.add_line(TextLine("WE HAVE ARRIVED TO RECLAIM HELEN", self.font, 100))
-        self.card_sequence.add_line(TextLine("BREACH THE GATES OF TROY", self.font, 100))
+        self.card_sequence.add_line(TextLine("WE HAVE ARRIVED TO RESCUE HELEN", self.font, 100))
+        self.card_sequence.add_line(TextLine("(AND CLAIM TROY'S RICHES)", self.font, 80))
+        self.card_sequence.add_line(TextLine("BREACH THE GATES", self.font, 100))
     
     def setup_dialogue(self):
         """The uncomfortable revelation - this isn't Troy at all"""
-        # Initial confidence
         self.dialogue_gate = TextSequence(config.BLACK)
         self.dialogue_gate.add_line(TextLine("THE GATES OF TROY...", self.font, 100, hold_frames=60))
         
-        # The realization
         self.dialogue_revelation = TextSequence(config.BLACK)
-        self.dialogue_revelation.add_line(TextLine("WAIT.", self.font, 100, hold_frames=50))
-        self.dialogue_revelation.add_line(TextLine("THIS IS NOT TROY.", self.font, 100, hold_frames=80))
-        self.dialogue_revelation.add_line(TextLine("THIS IS MYSIA.", self.font, 100, hold_frames=80))
-        self.dialogue_revelation.add_line(TextLine("WE HAVE ATTACKED THE WRONG CITY.", self.font, 100, hold_frames=100))
+        self.dialogue_revelation.add_line(TextLine("WAIT.", self.font, 100, hold_frames=40))
+        self.dialogue_revelation.add_line(TextLine("MYSIA.", self.font, 100, hold_frames=60))
+        self.dialogue_revelation.add_line(TextLine("WE CAME TO THE WRONG PLACE.", self.font, 100, hold_frames=100))
         
         self.dialogue = self.dialogue_gate
     
     def setup_enemies(self):
-        """Spawn defenders of Mysia - innocent people defending their home"""
         y_ground = config.GROUND_Y - 250
         start_x = config.WIDTH + 800
         
-        # Mysian defenders - they're not Trojans, just people defending their city
         for i in range(6):
             x = start_x + i * random.randint(180, 400)
             enemy = Enemy(x, y_ground)
             self.enemies.add(enemy)
     
     def update(self):
+        player_x = self.player.get_rect().centerx
+        trigger_x = self.gate_x + 300
         super().update()
-        
-        # Trigger revelation dialogue after passing through the gate
-        if (self.state == State.PLAYING and 
-            not self.revelation_triggered and 
-            self.player.get_rect().centerx > self.gate_x + 300):
+
+        print(f"Player X: {player_x}, Trigger X: {trigger_x}, State: {self.state}, Rev Triggered: {self.revelation_triggered}, Dialogue Triggered: {self.dialogue_triggered}")
+        print(self.state)
+        if (self.state == State.PLAYING and not self.revelation_triggered and self.player.get_rect().centerx > self.gate_x + 1000):
             self.revelation_triggered = True
             self.dialogue = self.dialogue_revelation
-            self.trigger_dialogue()
+            self.dialogue.start()
+            self.dialogue_triggered = True
     
     def draw_level_elements(self):
         """Draw the gate labeled as 'Mysia' - but the player thinks it's Troy"""
@@ -75,4 +73,3 @@ class LevelOne(GameplayLevel):
         ]
 
 
-# Make sure TextSequence is imported
