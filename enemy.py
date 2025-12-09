@@ -59,4 +59,4 @@ class Enemy(pygame.sprite.Sprite):
         self.damage_timer = 10
         if self.health <= 0:
             self.kill()
-            player.add_glory(10)
+            player.add_spoils(10)

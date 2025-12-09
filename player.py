@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.last_attack_time = 0
         self.attack_range = 50
 
-        self.glory = 0
+        self.spoils = 0
 
     def jump(self):
         if self.on_ground:
@@ -53,9 +53,9 @@ class Player(pygame.sprite.Sprite):
 
     def get_img(self):
         return self.img
-    
-    def add_glory(self, amount):
-        self.glory += amount
+
+    def add_spoils(self, amount):
+        self.spoils += amount
 
     def attack(self, enemies, objects):
         now = pygame.time.get_ticks()

@@ -53,8 +53,8 @@ class LevelFour(GameplayLevel):
         
     def setup_card_sequence(self):
         """Vague military objectives"""
-        self.card_sequence.add_line(TextLine("NEUTRALIZE RESISTANCE", self.font, 100))
-        self.card_sequence.add_line(TextLine("SECURE THE AREA", self.font, 100))
+        self.card_sequence.add_line(TextLine("CLEAR THE SETTLEMENTS", self.font, 100))
+        self.card_sequence.add_line(TextLine("FOR HELEN", self.font, 100))
     
     def setup_dialogue(self):
         """Just cold orders"""
@@ -141,26 +141,14 @@ class LevelFour(GameplayLevel):
         pygame.draw.rect(self.screen, config.BLACK, marker_cam, 2)
     
     def draw_hud(self):
-        """Track both enemies and how many civilians fled"""
-        font = pygame.font.Font("assets/Romanica.ttf", 12)
-        
-        glory_surf = font.render(f"GLORY: {self.player.glory}", True, config.BLACK)
-        glory_rect = glory_surf.get_rect(topleft=(10, 4))
-        self.screen.blit(glory_surf, glory_rect)
-        
-        # Show displacement
-        remaining = len(self.civilians)
-        fled = self.initial_civilian_count - remaining
-        if fled > 0:
-            displaced_surf = font.render(f"DISPLACED: {fled}", True, config.BLACK)
-            displaced_rect = displaced_surf.get_rect(topleft=(10, 20))
-            self.screen.blit(displaced_surf, displaced_rect)
+        """Use base dual messaging HUD"""
+        # Call parent HUD (dual messaging)
+        super().draw_hud()
     
     def get_completion_stats(self):
         """Clinical and brief"""
-        fled = self.initial_civilian_count - len(self.civilians)
         return [
-            "AREA SECURED",
-            f"GLORY: {self.player.glory}",
-            f"DISPLACED: {fled}",
+            "SETTLEMENTS CLEARED",
+            f"SPOILS TAKEN: {self.player.spoils}",
+            "HELEN WAS NOT HERE",
         ]

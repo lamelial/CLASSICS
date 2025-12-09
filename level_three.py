@@ -79,15 +79,14 @@ class LevelThree(GameplayLevel):
         
     def setup_card_sequence(self):
         """Military language for burning villages"""
-        self.card_sequence.add_line(TextLine("DENYING RESOURCES TO THE ENEMY", self.font, 100))
-        self.card_sequence.add_line(TextLine("ELIMINATE SUPPLY INFRASTRUCTURE", self.font, 100))
-        self.card_sequence.add_line(TextLine("ACCEPTABLE CIVILIAN IMPACT", self.font, 100))
+        self.card_sequence.add_line(TextLine("TROY FEEDS FROM THESE VILLAGES", self.font, 100))
+        self.card_sequence.add_line(TextLine("BURN PEDASUS", self.font, 100))
+        self.card_sequence.add_line(TextLine("FREE HELEN", self.font, 100))
     
     def setup_dialogue(self):
         """The orders are clear, but uncomfortable"""
-        self.dialogue.add_line(TextLine("THE VILLAGE OF PEDASUS", self.font, 100, hold_frames=50))
-        self.dialogue.add_line(TextLine("THEY FEED TROY'S ARMIES", self.font, 100, hold_frames=60))
-        self.dialogue.add_line(TextLine("BURN IT ALL", self.font, 100, hold_frames=80))
+        self.dialogue.add_line(TextLine("PEDASUS", self.font, 100, hold_frames=50))
+        self.dialogue.add_line(TextLine("BURN IT", self.font, 100, hold_frames=60))
     
     def setup_village(self):
         """Create buildings with villagers inside"""
@@ -201,26 +200,14 @@ class LevelThree(GameplayLevel):
         pygame.draw.polygon(self.screen, BUILDING_COLOR, roof_points, 3)
     
     def draw_hud(self):
-        """Show progress of destruction"""
-        font = pygame.font.Font("assets/Romanica.ttf", 12)
-        
-        # Show as "objectives completed"
-        hud_text = f"STRUCTURES ELIMINATED: {self.buildings_burned}/{self.total_buildings}"
-        hud_surf = font.render(hud_text, True, config.BLACK)
-        hud_rect = hud_surf.get_rect(topleft=(10, 4))
-        self.screen.blit(hud_surf, hud_rect)
-        
-        # Glory counter below
-        glory_surf = font.render(f"GLORY: {self.player.glory}", True, config.BLACK)
-        glory_rect = glory_surf.get_rect(topleft=(10, 20))
-        self.screen.blit(glory_surf, glory_rect)
+        """Use base dual messaging HUD"""
+        # Call parent HUD (dual messaging)
+        super().draw_hud()
     
     def get_completion_stats(self):
         """Clinical military report"""
         return [
-            "VILLAGE PACIFIED",
-            f"GLORY: {self.player.glory}",
-            f"STRUCTURES DESTROYED: {self.total_buildings}",
-            "DISPLACED CIVILIANS: MULTIPLE",
-            "MISSION: ACCOMPLISHED",
+            "PEDASUS BURNS",
+            f"SPOILS TAKEN: {self.player.spoils}",
+            "HELEN WAS NOT HERE",
         ]

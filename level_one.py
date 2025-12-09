@@ -20,20 +20,18 @@ class LevelOne(GameplayLevel):
         self.state = State.PLAYING
         
     def setup_card_sequence(self):
-        self.card_sequence.add_line(TextLine("WE HAVE ARRIVED TO RESCUE HELEN", self.font, 100))
-        self.card_sequence.add_line(TextLine("(AND CLAIM TROY'S RICHES)", self.font, 80))
+        self.card_sequence.add_line(TextLine("HELEN AWAITS", self.font, 80))
         self.card_sequence.add_line(TextLine("BREACH THE GATES", self.font, 100))
     
     def setup_dialogue(self):
         """The uncomfortable revelation - this isn't Troy at all"""
         self.dialogue_gate = TextSequence(config.BLACK)
-        self.dialogue_gate.add_line(TextLine("THE GATES OF TROY...", self.font, 100, hold_frames=60))
-        
+        self.dialogue_gate.add_line(TextLine("THE GATES OF TROY", self.font, 100, hold_frames=60))
+
         self.dialogue_revelation = TextSequence(config.BLACK)
-        self.dialogue_revelation.add_line(TextLine("WAIT.", self.font, 100, hold_frames=40))
-        self.dialogue_revelation.add_line(TextLine("MYSIA.", self.font, 100, hold_frames=60))
-        self.dialogue_revelation.add_line(TextLine("WE CAME TO THE WRONG PLACE.", self.font, 100, hold_frames=100))
-        
+        self.dialogue_revelation.add_line(TextLine("WAIT", self.font, 100, hold_frames=40))
+        self.dialogue_revelation.add_line(TextLine("THIS IS MYSIA", self.font, 100, hold_frames=60))
+
         self.dialogue = self.dialogue_gate
     
     def setup_enemies(self):
@@ -59,7 +57,6 @@ class LevelOne(GameplayLevel):
             self.dialogue_triggered = True
     
     def draw_level_elements(self):
-        """Draw the gate labeled as 'Mysia' - but the player thinks it's Troy"""
         # The gate is labeled ΜYΣΙΑ but the player was told this is Troy
         self.draw_gate(self.screen, self.gate_x, config.GROUND_Y, label="ΜYΣΙΑ")
     
@@ -67,9 +64,8 @@ class LevelOne(GameplayLevel):
         """Victory screen with an uncomfortable truth"""
         return [
             "MYSIA HAS FALLEN",
-            f"GLORY: {self.player.glory}",
-            "BUT THIS WAS NOT TROY...",
-            "HELEN WAS NEVER HERE",
+            f"SPOILS TAKEN: {self.player.spoils}",
+            "HELEN WAS NOT HERE",
         ]
 
 

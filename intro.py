@@ -29,11 +29,9 @@ class Intro(Level):
         self.started = False
 
         self.text_seq = TextSequence()
-        self.text_seq.add_line(TextLine("ONE THOUSAND SHIPS SAIL",
+        self.text_seq.add_line(TextLine("ONE THOUSAND SHIPS",
                                         self.font, 120))
-        self.text_seq.add_line(TextLine("TO LIBERATE HELEN FROM THE TROJANS",
-                                        self.font, 120))
-        self.text_seq.add_line(TextLine("OBJECTIVE: RESCUE HELEN",
+        self.text_seq.add_line(TextLine("TO BRING HELEN HOME",
                                         self.font, 120))
 
         # fleet setup ...

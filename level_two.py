@@ -25,8 +25,8 @@ class LevelTwo(GameplayLevel):
         
     def setup_card_sequence(self):
         """Add level-specific narrative to the intro card"""
-        self.card_sequence.add_line(TextLine("TO WEAKEN TROY, WE MUST TAKE HER ALLIES", self.font, 100))
-        self.card_sequence.add_line(TextLine("SACK THE CITY OF LYRNESSUS", self.font, 100))
+        self.card_sequence.add_line(TextLine("TROY'S ALLIES HOLD HELEN", self.font, 100))
+        self.card_sequence.add_line(TextLine("TAKE LYRNESSUS", self.font, 100))
     
     def setup_dialogue(self):
         """Set up dialogue for each gate"""
@@ -155,8 +155,7 @@ class LevelTwo(GameplayLevel):
         """Darker victory message reflecting the sack of the city"""
         return [
             "LYRNESSUS HAS FALLEN",
-            f"GLORY: {self.player.glory}",
-            "THE SPOILS OF WAR ARE OURS",
-            "BUT AT WHAT COST...",
+            f"SPOILS TAKEN: {self.player.spoils}",
+            "HELEN WAS NOT HERE",
         ]
 

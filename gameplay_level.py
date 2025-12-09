@@ -154,11 +154,18 @@ class GameplayLevel(Level):
         pass
     
     def draw_hud(self):
-        """Draw the player's glory/stats"""
+        """Draw dual messaging: stated objective vs actual measurement"""
         font = pygame.font.Font("assets/Romanica.ttf", 12)
-        glory_surf = font.render(f"GLORY: {self.player.glory}", True, config.BLACK)
-        glory_rect = glory_surf.get_rect(topleft=(10, 4))
-        self.screen.blit(glory_surf, glory_rect)
+
+        # Top left: The stated mission (never changes)
+        objective_surf = font.render("OBJECTIVE: FIND HELEN", True, config.BLACK)
+        objective_rect = objective_surf.get_rect(topleft=(10, 4))
+        self.screen.blit(objective_surf, objective_rect)
+
+        # Top right: What we actually count (spoils)
+        spoils_surf = font.render(f"SPOILS: {self.player.spoils}", True, config.BLACK)
+        spoils_rect = spoils_surf.get_rect(topright=(config.WIDTH - 10, 4))
+        self.screen.blit(spoils_surf, spoils_rect)
     
     def draw_card(self):
         """Draw the level intro card"""
@@ -214,49 +221,38 @@ class GameplayLevel(Level):
             self.dialogue_triggered = True
     
     def draw_gate(self, surface, x_world, ground_y, label="ΜYΣΙΑ"):
-        """Draw a decorative gate with collision detection"""
+        """Draw a decorative gate (visual only, no collision)"""
         GATE_COLOR = config.BLACK
         PILLAR_WIDTH = 40
         GATE_HEIGHT = 250
         GATE_WIDTH = 200
         BEAM_HEIGHT = 25
-        
+
         # World-space rects
-        left_pillar_world = pygame.Rect(x_world, ground_y - GATE_HEIGHT, 
+        left_pillar_world = pygame.Rect(x_world, ground_y - GATE_HEIGHT,
                                        PILLAR_WIDTH, GATE_HEIGHT)
-        right_pillar_world = pygame.Rect(x_world + GATE_WIDTH, ground_y - GATE_HEIGHT, 
+        right_pillar_world = pygame.Rect(x_world + GATE_WIDTH, ground_y - GATE_HEIGHT,
                                         PILLAR_WIDTH, GATE_HEIGHT)
         beam_world = pygame.Rect(x_world, ground_y - GATE_HEIGHT - BEAM_HEIGHT,
                                 GATE_WIDTH + PILLAR_WIDTH, BEAM_HEIGHT)
-        
+
         # Camera-space rects for drawing
         left_pillar = self.camera.apply(left_pillar_world)
         right_pillar = self.camera.apply(right_pillar_world)
         beam = self.camera.apply(beam_world)
-        
+
         # Draw pillars & beam
         pygame.draw.rect(surface, GATE_COLOR, left_pillar)
-        
+
         # Draw player
         player_rect_cam = self.camera.apply(self.player.get_rect())
         self.screen.blit(self.player.get_img(), player_rect_cam)
-        
+
         pygame.draw.rect(surface, GATE_COLOR, right_pillar)
         pygame.draw.rect(surface, GATE_COLOR, beam)
-        
+
         # Label
         greek_font = pygame.font.Font("assets/FreeSerif.ttf", 20)
         label_surf = greek_font.render(label, True, config.CLAY)
         label_rect = label_surf.get_rect(center=(beam.centerx, beam.top + 10))
         surface.blit(label_surf, label_rect)
-        
-        # Collision detection for dialogue trigger
-        passage_rect_world = pygame.Rect(
-            x_world + PILLAR_WIDTH,
-            ground_y - GATE_HEIGHT - BEAM_HEIGHT,
-            GATE_WIDTH,
-            GATE_HEIGHT + BEAM_HEIGHT,
-        )
-        
-        if not self.dialogue_triggered and self.player.get_rect().colliderect(passage_rect_world):
-            self.trigger_dialogue()

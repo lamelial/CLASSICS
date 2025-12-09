@@ -160,31 +160,18 @@ class LevelFive(GameplayLevel):
         surface.blit(label_surf, (label_x, label_y))
     
     def draw_hud(self):
-        """Emphasize the mission and glory"""
-        font = pygame.font.Font("assets/Romanica.ttf", 12)
-        
-        # Big mission objective
-        mission_surf = font.render("OBJECTIVE: FIND HELEN", True, config.BLACK)
-        mission_rect = mission_surf.get_rect(topleft=(10, 4))
-        self.screen.blit(mission_surf, mission_rect)
-        
-        # Glory counter
-        glory_surf = font.render(f"GLORY: {self.player.glory}", True, config.BLACK)
-        glory_rect = glory_surf.get_rect(topleft=(10, 20))
-        self.screen.blit(glory_surf, glory_rect)
+        """Use base dual messaging HUD"""
+        # Call parent HUD (dual messaging)
+        super().draw_hud()
     
     def get_completion_stats(self):
         """MASSIVE glory reward, Helen absent, no commentary"""
-        total_glory = self.player.glory + self.mission_bonus
-        
         return [
             "TROY HAS FALLEN",
             "",
-            f"GLORY EARNED: {self.player.glory}",
-            f"MISSION BONUS: +{self.mission_bonus}",
-            f"TOTAL GLORY: {total_glory}",
+            f"TOTAL SPOILS: {self.player.spoils}",
             "",
-            "HELEN: NOT FOUND",
+            "HELEN WAS NOT HERE",
             "",
-            "MISSION COMPLETE",
+            "SHE WAS NEVER HERE",
         ]
