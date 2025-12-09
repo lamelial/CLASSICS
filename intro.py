@@ -57,14 +57,14 @@ class Intro(Level):
         # update text sequence
         self.text_seq.update()
 
-    def handle_events(self, keys):
+    def handle_events(self, keys, mouse_buttons):
         dx = 0
 
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             dx = 1
             if not self.started:
                 self.started = True
-        elif keys[pygame.K_LEFT]:
+        elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
             dx = -1
 
         if dx != 0:
@@ -87,7 +87,7 @@ class Intro(Level):
 
         # initial prompt
         if self.text_alpha > 0:
-            self.draw_centered_text("PRESS RIGHT TO SAIL FOR TROY",
+            self.draw_centered_text("SAIL FOR TROY",
                                     self.font, 120, self.text_alpha)
 
         # narrative sequence

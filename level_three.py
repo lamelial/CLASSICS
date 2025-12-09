@@ -63,37 +63,32 @@ class Building(pygame.sprite.Sprite):
 
 
 class LevelThree(GameplayLevel):
-    """Level Three: Scorched Earth - Burn villages, watch civilians flee"""
     
     def __init__(self, screen):
-        super().__init__(screen, "LEVEL THREE", "SCORCHED EARTH PROTOCOL")
-        
+        super().__init__(screen, "LEVEL THREE", "CUT OFF TROY'S SUPPLIES")
+
         self.buildings = pygame.sprite.Group()
         self.villagers = pygame.sprite.Group()
         self.buildings_burned = 0
         self.total_buildings = 6
         self.flame_particles = []
-        
+        self.civilians_flee_triggered = False
+
         self.setup_village()
         self.setup_enemies()
         
     def setup_card_sequence(self):
-        """Military language for burning villages"""
         self.card_sequence.add_line(TextLine("TROY FEEDS FROM THESE VILLAGES", self.font, 100))
-        self.card_sequence.add_line(TextLine("BURN PEDASUS", self.font, 100))
+        self.card_sequence.add_line(TextLine("BURN THE VILLAGES", self.font, 100))
         self.card_sequence.add_line(TextLine("FREE HELEN", self.font, 100))
-    
-    def setup_dialogue(self):
-        """The orders are clear, but uncomfortable"""
-        self.dialogue.add_line(TextLine("PEDASUS", self.font, 100, hold_frames=50))
-        self.dialogue.add_line(TextLine("BURN IT", self.font, 100, hold_frames=60))
+
     
     def setup_village(self):
         """Create buildings with villagers inside"""
         building_positions = [600, 900, 1200, 1600, 2000, 2400]
         
         for x in building_positions:
-            villagers_count = random.randint(2, 4)
+            villagers_count = 2
             building = Building(x, config.GROUND_Y, villagers_count)
             self.buildings.add(building)
     
@@ -127,11 +122,19 @@ class LevelThree(GameplayLevel):
                     building.villagers_fled = True
                     for i in range(building.villagers_inside):
                         villager = Villager(
-                            building.x + random.randint(0, 150),
+                            building.x + (100 * i),
                             config.GROUND_Y - 250
                         )
                         villager.flee()
                         self.villagers.add(villager)
+
+                    # Trigger dialogue first time civilians flee
+                    if not self.civilians_flee_triggered:
+                        self.civilians_flee_triggered = True
+                        flee_dialogue = TextSequence(config.BLACK)
+                        flee_dialogue.add_line(TextLine("CIVILIANS FLEE...", self.font, 100, hold_frames=80))
+                        self.dialogue = flee_dialogue
+                        self.trigger_dialogue()
         
         # Remove destroyed buildings
         for building in self.buildings:
@@ -207,7 +210,8 @@ class LevelThree(GameplayLevel):
     def get_completion_stats(self):
         """Clinical military report"""
         return [
-            "PEDASUS BURNS",
+            "THE VILLAGE BURNS",
             f"SPOILS TAKEN: {self.player.spoils}",
-            "HELEN WAS NOT HERE",
+            f"GLORY EARNED: {self.player.spoils / 2:.0f}",
+            "HELEN IS NOT HERE",
         ]

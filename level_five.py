@@ -18,154 +18,194 @@ class TrojanCivilian(pygame.sprite.Sprite):
         )
         self.rect = self.img.get_rect(topleft=(x, y))
         self.speed = random.randint(2, 4)
-        self.fleeing = True
-        
+
     def update(self):
-        if self.fleeing:
-            self.rect.x -= self.speed
-            self.rect.y += random.randint(-1, 1)
+        # Simple movement - flee left
+        self.rect.x -= self.speed
+
+
+class BurningHouse(pygame.sprite.Sprite):
+    """A burning building in Troy"""
+    def __init__(self, x, y, width, height):
+        super().__init__()
+        self.rect = pygame.Rect(x, y, width, height)
+        self.width = width
+        self.height = height
+        self.flame_offset = random.randint(0, 60)
+
+    def draw(self, surface, camera):
+        # Draw house structure
+        house_cam = camera.apply(self.rect)
+        pygame.draw.rect(surface, config.BLACK, house_cam, 3)
+
+        # Draw flames on top
+        flame_height = 20 + abs(int(10 * pygame.time.get_ticks() / 100 % 10 - 5))
+        flame_y = house_cam.top - flame_height
+
+        # Multiple flame points
+        for i in range(3):
+            flame_x = house_cam.left + (i + 1) * (self.width // 4)
+            flame_points = [
+                (flame_x, flame_y),
+                (flame_x - 10, house_cam.top),
+                (flame_x + 10, house_cam.top)
+            ]
+            pygame.draw.polygon(surface, config.RED, flame_points)
 
 
 class LevelFive(GameplayLevel):
-    """Level Five: The Sack of Troy - Maximum chaos, Helen absent, maximum glory"""
-    
+    """Level Five: The Sack of Troy"""
+
     def __init__(self, screen):
-        super().__init__(screen, "LEVEL FIVE", "OPERATION: HELEN")
-        
-        self.troy_gates_x = 1500
-        self.gates_breached = False
-        self.trojans = pygame.sprite.Group()
-        self.mission_bonus = 500
-        
+        super().__init__(screen, "LEVEL FIVE", "THE SACK OF TROY")
+
+        self.gate_x = 1500
+        self.passed_gate = False
+        self.gate_message_shown = False
+
+        self.civilians = pygame.sprite.Group()
+        self.houses = []
+
+        self.setup_troy()
         self.setup_enemies()
-        
+
     def setup_card_sequence(self):
-        """Back to the original, simple mission"""
+        """Opening cards"""
         self.card_sequence.add_line(TextLine("TEN YEARS", self.font, 100))
         self.card_sequence.add_line(TextLine("AT LAST: TROY", self.font, 100))
         self.card_sequence.add_line(TextLine("RESCUE HELEN", self.font, 100))
-    
+
     def setup_dialogue(self):
-        """Just the objective at the gates"""
-        self.dialogue.add_line(TextLine("FIND HELEN", self.font, 100, hold_frames=60))
-    
+        """Gate message"""
+        self.dialogue.add_line(TextLine("THE WALLS OF TROY", self.font, 100, hold_frames=80))
+
+    def setup_troy(self):
+        """Setup burning houses and fleeing civilians"""
+        y_ground = config.GROUND_Y
+
+        # Create burning houses beyond the gate
+        house_positions = [
+            (self.gate_x + 200, y_ground - 150, 120, 150),
+            (self.gate_x + 400, y_ground - 180, 100, 180),
+            (self.gate_x + 600, y_ground - 140, 130, 140),
+            (self.gate_x + 850, y_ground - 160, 110, 160),
+            (self.gate_x + 1100, y_ground - 170, 140, 170),
+        ]
+
+        for x, y, w, h in house_positions:
+            house = BurningHouse(x, y, w, h)
+            self.houses.append(house)
+
+        # Create fleeing civilians
+        for i in range(15):
+            x = self.gate_x + random.randint(150, 1000)
+            y = y_ground - random.randint(240, 260)
+            civilian = TrojanCivilian(x, y)
+            self.civilians.add(civilian)
+
     def setup_enemies(self):
-        """Massive final battle"""
+        """Enemies scattered throughout Troy"""
         y_ground = config.GROUND_Y - 250
-        
-        # Dense defenders
-        start_x = config.WIDTH + 300
-        for i in range(18):
-            x = start_x + i * random.randint(120, 280)
+
+        # Enemies inside Troy
+        for i in range(12):
+            x = self.gate_x + random.randint(200, 1200)
             enemy = Enemy(x, y_ground)
             self.enemies.add(enemy)
-    
+
     def update(self):
         if self.state == State.GAME_OVER:
             self.level_over()
             return
-        
+
         if self.showing_card:
             self.card_sequence.update()
             if self.card_sequence.is_finished():
                 self.showing_card = False
                 self.state = State.PLAYING
             return
-        
+
         self.player.update()
         self.camera.follow(self.player.get_rect(), config.WIDTH)
         self.enemies.update()
-        
+
         player_x = self.player.get_rect().centerx
-        
-        # Gates breach when player reaches them
-        if not self.gates_breached and player_x > self.troy_gates_x - 50:
-            self.gates_breached = True
-            self.spawn_fleeing_trojans()
-        
-        # Update fleeing Trojans
-        self.trojans.update()
-        
-        # Remove those who fled off screen
-        for trojan in self.trojans:
-            if trojan.rect.right < -100:
-                self.trojans.remove(trojan)
-        
-        # Level ends when all enemies dead
-        if len(self.enemies) == 0:
-            self.state = State.GAME_OVER
-        
+
+        # Show gate message when player walks through
+        if not self.gate_message_shown and player_x > self.gate_x - 50:
+            self.gate_message_shown = True
+            self.dialogue_triggered = True
+            self.passed_gate = True
+
+        # Update civilians
+        self.civilians.update()
+
+        # Remove civilians that fled off screen
+        for civilian in list(self.civilians):
+            if civilian.rect.right < -100:
+                self.civilians.remove(civilian)
+
+        # Update dialogue
         if self.dialogue_triggered:
             self.dialogue.update()
             if self.dialogue.is_finished():
                 self.dialogue_triggered = False
-    
-    def spawn_fleeing_trojans(self):
-        """When gates breach, masses flee"""
-        for i in range(25):
-            x = self.troy_gates_x + random.randint(100, 700)
-            y = config.GROUND_Y - random.randint(240, 260)
-            trojan = TrojanCivilian(x, y)
-            self.trojans.add(trojan)
-    
+
+        # Level ends when all enemies are defeated
+        if len(self.enemies) == 0:
+            self.state = State.GAME_OVER
+
     def draw_level_elements(self):
-        """Draw Troy's walls and the chaos inside"""
-        self.draw_troy_walls(self.screen, self.troy_gates_x, config.GROUND_Y)
-        
-        # Draw fleeing Trojans
-        for trojan in self.trojans:
-            trojan_cam = self.camera.apply(trojan.rect)
-            self.screen.blit(trojan.img, trojan_cam)
-    
-    def draw_troy_walls(self, surface, x_world, ground_y):
-        """Troy's massive walls"""
+        """Draw Troy's gate, burning houses, and fleeing civilians"""
+        self.draw_gate(self.screen, self.gate_x, config.GROUND_Y)
+
+        # Draw burning houses
+        for house in self.houses:
+            house.draw(self.screen, self.camera)
+
+        # Draw fleeing civilians
+        for civilian in self.civilians:
+            civilian_cam = self.camera.apply(civilian.rect)
+            self.screen.blit(civilian.img, civilian_cam)
+
+    def draw_gate(self, surface, x_world, ground_y):
+        """Draw the gate/walls of Troy"""
         WALL_COLOR = config.BLACK
-        
+
         wall_height = 350
         wall_width = 100
-        wall_world = pygame.Rect(x_world, ground_y - wall_height, wall_width, wall_height)
+
+        # Left wall
+        wall_world = pygame.Rect(x_world - 60, ground_y - wall_height, wall_width, wall_height)
         wall_cam = self.camera.apply(wall_world)
         pygame.draw.rect(surface, WALL_COLOR, wall_cam, 5)
-        
-        if self.gates_breached:
-            # Gates smashed
-            gate_world = pygame.Rect(x_world + 25, ground_y - 200, 50, 200)
-            gate_cam = self.camera.apply(gate_world)
-            # Broken pieces
-            pygame.draw.rect(surface, WALL_COLOR, 
-                           pygame.Rect(gate_cam.left - 25, gate_cam.bottom - 50, 30, 50), 3)
-            pygame.draw.rect(surface, WALL_COLOR,
-                           pygame.Rect(gate_cam.right + 15, gate_cam.bottom - 40, 30, 40), 3)
-        else:
-            # Intact gate
-            gate_world = pygame.Rect(x_world + 25, ground_y - 220, 50, 220)
-            gate_cam = self.camera.apply(gate_world)
-            pygame.draw.rect(surface, WALL_COLOR, gate_cam, 4)
-        
-        # Battlements
-        for i in range(10):
+
+        # Right wall
+        wall_world2 = pygame.Rect(x_world + 60, ground_y - wall_height, wall_width, wall_height)
+        wall_cam2 = self.camera.apply(wall_world2)
+        pygame.draw.rect(surface, WALL_COLOR, wall_cam2, 5)
+
+        # Gate opening
+        gate_world = pygame.Rect(x_world - 50, ground_y - 220, 100, 220)
+        gate_cam = self.camera.apply(gate_world)
+        pygame.draw.rect(surface, WALL_COLOR, gate_cam, 4)
+
+        # Battlements on top
+        for i in range(15):
             battlement_world = pygame.Rect(
-                x_world + i * 30, 
-                ground_y - wall_height - 25, 
-                20, 25
+                x_world - 60 + i * 20,
+                ground_y - wall_height - 25,
+                15, 25
             )
             battlement_cam = self.camera.apply(battlement_world)
             pygame.draw.rect(surface, WALL_COLOR, battlement_cam)
-        
-        # TROY label
-        greek_font = pygame.font.Font("assets/FreeSerif.ttf", 32)
-        label_surf = greek_font.render("ΤΡΟΊΑ", True, config.CLAY)
-        label_x = wall_cam.centerx - label_surf.get_width() // 2
-        label_y = wall_cam.centery
-        surface.blit(label_surf, (label_x, label_y))
-    
+
     def draw_hud(self):
-        """Use base dual messaging HUD"""
-        # Call parent HUD (dual messaging)
+        """Use base HUD"""
         super().draw_hud()
-    
+
     def get_completion_stats(self):
-        """MASSIVE glory reward, Helen absent, no commentary"""
+        """Completion message"""
         return [
             "TROY HAS FALLEN",
             "",

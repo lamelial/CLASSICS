@@ -11,7 +11,6 @@ from intro import Intro
 class State(Enum):
     TITLE = 0
     LEVEL = 1
-    CUT = 2
 
 
 class Game:
@@ -31,10 +30,11 @@ class Game:
 
     def handle_events(self):
         keys = pygame.key.get_pressed()
+        mouse_buttons = pygame.mouse.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-        if self.state == State.TITLE or self.state == State.CUT:
+        if self.state == State.TITLE:
             if any(keys):
                 self.start_level(self.level_index)
         # dev tools
@@ -50,21 +50,23 @@ class Game:
             self.start_level(5)
 
         elif self.state == State.LEVEL:
-            self.current_level.handle_events(keys)
+            self.current_level.handle_events(keys, mouse_buttons)
 
     def update(self):
         if self.state == State.LEVEL:
             self.current_level.update()
             if self.current_level.check_level_done():
-                self.state = State.CUT
-                self.current_level = None
+                # Go directly to next level (no cutscene)
                 if self.level_index < len(self.levels) - 1:
                     self.level_index += 1
+                    self.start_level(self.level_index)
+                else:
+                    # Game finished - return to title
+                    self.state = State.TITLE
+                    self.level_index = 0
 
     def draw(self):
         if self.state == State.TITLE:
             self.title_screen.draw_title()
         elif self.state == State.LEVEL:
             self.current_level.draw()
-        elif self.state == State.CUT:
-            self.title_screen.draw_agam()

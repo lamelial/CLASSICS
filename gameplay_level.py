@@ -83,18 +83,18 @@ class GameplayLevel(Level):
             if self.dialogue.is_finished():
                 self.dialogue_triggered = False
     
-    def handle_events(self, keys):
+    def handle_events(self, keys, mouse_buttons):
         if self.state == State.GAME_OVER:
             if keys[pygame.K_SPACE]:
                 self.state = State.RETURN
             return
-        
+
         if self.showing_card:
             if keys[pygame.K_SPACE]:
                 self.showing_card = False  # SKIP
             return
-        
-        super().handle_events(keys)
+
+        super().handle_events(keys, mouse_buttons)
         
         player_rect = self.player.get_rect()
         
@@ -155,18 +155,22 @@ class GameplayLevel(Level):
     
     def draw_hud(self):
         """Draw dual messaging: stated objective vs actual measurement"""
-        font = pygame.font.Font("assets/Romanica.ttf", 12)
+        font = pygame.font.Font("assets/Romanica.ttf", 16)
 
         # Top left: The stated mission (never changes)
-        objective_surf = font.render("OBJECTIVE: FIND HELEN", True, config.BLACK)
-        objective_rect = objective_surf.get_rect(topleft=(10, 4))
+        objective_surf = font.render("OBJECTIVE: RESCUE HELEN", True, config.BLACK)
+        objective_rect = objective_surf.get_rect(topleft=(10, 55))
         self.screen.blit(objective_surf, objective_rect)
 
         # Top right: What we actually count (spoils)
         spoils_surf = font.render(f"SPOILS: {self.player.spoils}", True, config.BLACK)
-        spoils_rect = spoils_surf.get_rect(topright=(config.WIDTH - 10, 4))
+        spoils_rect = spoils_surf.get_rect(topright=(config.WIDTH - 10, 55))
         self.screen.blit(spoils_surf, spoils_rect)
-    
+
+        glory_surf = font.render(f"GLORY: {f"{self.player.spoils/2:.0f}"}", True, config.BLACK)
+        glory_rect = glory_surf.get_rect(topright=(config.WIDTH - 100, 55))
+        self.screen.blit(glory_surf, glory_rect)
+
     def draw_card(self):
         """Draw the level intro card"""
         self.screen.fill(config.BLACK)

@@ -21,17 +21,18 @@ class Level:
     def draw(self):
         pass 
 
-    def handle_events(self, keys):
+    def handle_events(self, keys, mouse_buttons):
         self.dx = 0
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.dx = -1
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.dx = 1
         if keys[pygame.K_SPACE]:
             self.player.jump()
         self.player.move(self.dx)
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_q]:
+
+        # Attack with left mouse button or Q key
+        if mouse_buttons[0] or keys[pygame.K_q]:
             self.player.attack(self.enemies, self.objects)
 
     def draw_key_pattern(self, surface, image, offset, y):
